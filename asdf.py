@@ -44,19 +44,22 @@ class Brew(dotbot.Plugin):
             name = plugin.get('plugin', None)
             url = plugin.get('url', None)
 
-            if not name or not url:
+            if not name:
                 raise ValueError(
                     '{} is not valid plugin definition'.format(str(plugin))
                 )
 
 
     def _build_command(self, plugin, url):
-        return '{} {} {}'.format(self._install_command, plugin, url)
+        if not url:
+            return '{} {}'.format(self._install_command, plugin)
+        else:
+            return '{} {} {}'.format(self._install_command, plugin, url)
 
     def _handle_install(self, data):
         for plugin in data:
             p = subprocess.Popen(
-                self._build_command(plugin['plugin'], plugin['url']),
+                self._build_command(plugin['plugin'], plugin.get('url', None)),
                 stdin=subprocess.PIPE,
                 stdout=subprocess.PIPE,
                 shell=True,
