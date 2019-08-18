@@ -17,6 +17,20 @@ class Brew(dotbot.Plugin):
 
     _install_command = 'asdf plugin-add'
 
+    def __init__(self, context):
+        super(Brew, self).__init__(context)
+        p = subprocess.Popen(
+            'asdf plugin-list-all',
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            shell=True,
+            cwd=self.cwd
+        )
+        p.wait()
+        output, _ = p.communicate()
+        plugins = output.decode('utf-8')
+        self._known_plugins = plugins.split()[::2]
+
     # API methods
 
     def can_handle(self, directive):
@@ -47,6 +61,10 @@ class Brew(dotbot.Plugin):
             if not name:
                 raise ValueError(
                     '{} is not valid plugin definition'.format(str(plugin))
+                )
+            elif not url and name not in self._known_plugins:
+                raise ValueError(
+                    'Unknown plugin: {}\nPlease provide URL'.format(name)
                 )
 
 
