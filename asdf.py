@@ -86,7 +86,7 @@ class Brew(dotbot.Plugin):
             p.wait()
             _, output_err = p.communicate()
 
-            if output_err != None:
+            if output_err is not None:
                 message = 'Failed to install: ' + plugin['plugin']
                 raise ValueError(message + ' ')
 
