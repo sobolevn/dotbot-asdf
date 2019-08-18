@@ -38,6 +38,17 @@ git submodule add https://github.com/sobolevn/dotbot-asdf.git
       url: https://github.com/asdf-vm/asdf-ruby.git
 ```
 
+Plugins can also be specified with just a name for [known plugins](https://asdf-vm.com/#/plugins-all?id=plugin-list):
+
+```yaml
+# This example uses python, nodejs and ruby plugins:
+
+- asdf:
+    - plugin: python
+    - plugin: nodejs
+    - plugin: ruby
+```
+
 That's it!
 
 
