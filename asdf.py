@@ -67,7 +67,6 @@ class Brew(dotbot.Plugin):
                     'Unknown plugin: {}\nPlease provide URL'.format(name)
                 )
 
-
     def _build_command(self, plugin, url):
         if not url:
             return '{} {}'.format(self._install_command, plugin)
@@ -89,4 +88,3 @@ class Brew(dotbot.Plugin):
             if output_err is not None:
                 message = 'Failed to install: ' + plugin['plugin']
                 raise ValueError(message + ' ')
-
