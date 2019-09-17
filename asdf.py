@@ -19,15 +19,11 @@ class Brew(dotbot.Plugin):
 
     def __init__(self, context):
         super(Brew, self).__init__(context)
-        p = subprocess.Popen(
+        output = self._run_command(
             'asdf plugin-list-all',
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            shell=True,
-            cwd=self.cwd
+            error_message='Failed to get known plugins',
+            stdout=subprocess.PIPE
         )
-        p.wait()
-        output, _ = p.communicate()
         plugins = output.decode('utf-8')
         self._known_plugins = plugins.split()[::2]
 
@@ -75,16 +71,25 @@ class Brew(dotbot.Plugin):
 
     def _handle_install(self, data):
         for plugin in data:
-            p = subprocess.Popen(
-                self._build_command(plugin['plugin'], plugin.get('url', None)),
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                shell=True,
-                cwd=self.cwd
+            language = plugin['plugin']
+            self._run_command(
+                'asdf plugin-add {} {}'.format(language, plugin.get('url', '')).strip(),
+                'Installing {} plugin'.format(language),
+                'Failed to install: {} plugin'.format(language)
             )
-            p.wait()
-            _, output_err = p.communicate()
 
-            if output_err is not None:
-                message = 'Failed to install: ' + plugin['plugin']
-                raise ValueError(message + ' ')
+    def _run_command(self, command, message=None, error_message=None, **kwargs):
+        if message is not None:
+            self._log.lowinfo(message)
+
+        p = subprocess.Popen(command, cwd=self.cwd, shell=True, **kwargs)
+        p.wait()
+        output, output_err = p.communicate()
+
+        if output_err is not None:
+            if error_message is None:
+                error_message = 'Command failed: {}'.format(command)
+
+            raise ValueError(error_message)
+
+        return output
