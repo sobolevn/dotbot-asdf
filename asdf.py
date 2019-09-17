@@ -52,13 +52,12 @@ class Brew(dotbot.Plugin):
     def _validate_plugins(self, plugins):
         for plugin in plugins:
             name = plugin.get('plugin', None)
-            url = plugin.get('url', None)
 
-            if not name:
+            if name is None:
                 raise ValueError(
-                    '{} is not valid plugin definition'.format(str(plugin))
+                    'Invalid plugin definition: {}'.format(str(plugin))
                 )
-            elif not url and name not in self._known_plugins:
+            elif 'url' not in plugin and name not in self._known_plugins:
                 raise ValueError(
                     'Unknown plugin: {}\nPlease provide URL'.format(name)
                 )
