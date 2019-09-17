@@ -15,8 +15,6 @@ class Brew(dotbot.Plugin):
         'asdf',
     ]
 
-    _install_command = 'asdf plugin-add'
-
     def __init__(self, context):
         super(Brew, self).__init__(context)
         output = self._run_command(
@@ -61,12 +59,6 @@ class Brew(dotbot.Plugin):
                 raise ValueError(
                     'Unknown plugin: {}\nPlease provide URL'.format(name)
                 )
-
-    def _build_command(self, plugin, url):
-        if not url:
-            return '{} {}'.format(self._install_command, plugin)
-        else:
-            return '{} {} {}'.format(self._install_command, plugin, url)
 
     def _handle_install(self, data):
         for plugin in data:
