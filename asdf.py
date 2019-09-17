@@ -71,6 +71,7 @@ class Brew(dotbot.Plugin):
     def _handle_install(self, data):
         for plugin in data:
             language = plugin['plugin']
+            self._log.info('Installing ' + language)
             self._run_command(
                 'asdf plugin-add {} {}'.format(language, plugin.get('url', '')).strip(),
                 'Installing {} plugin'.format(language),
