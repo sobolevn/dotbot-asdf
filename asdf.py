@@ -77,6 +77,16 @@ class Brew(dotbot.Plugin):
                 'Failed to install: {} plugin'.format(language)
             )
 
+            if 'versions' in plugin:
+                for version in plugin['versions']:
+                    self._run_command(
+                        'asdf install {} {}'.format(language, version),
+                        'Installing {} {}'.format(language, version),
+                        'Failed to install: {} {}'.format(language, version),
+                    )
+            else:
+                self._log.lowinfo('No {} versions to install'.format(language))
+
     def _run_command(self, command, message=None, error_message=None, **kwargs):
         if message is not None:
             self._log.lowinfo(message)
