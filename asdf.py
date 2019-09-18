@@ -4,18 +4,16 @@ import dotbot
 
 
 class Brew(dotbot.Plugin):
-    _supported_directives = [
-        'asdf',
-    ]
+    _supported_directives = ["asdf"]
 
     def __init__(self, context):
         super(Brew, self).__init__(context)
         output = self._run_command(
-            'asdf plugin-list-all',
-            error_message='Failed to get known plugins',
-            stdout=subprocess.PIPE
+            "asdf plugin-list-all",
+            error_message="Failed to get known plugins",
+            stdout=subprocess.PIPE,
         )
-        plugins = output.decode('utf-8')
+        plugins = output.decode("utf-8")
         self._known_plugins = plugins.split()[::2]
 
     # API methods
@@ -42,36 +40,32 @@ class Brew(dotbot.Plugin):
 
     def _validate_plugins(self, plugins):
         for plugin in plugins:
-            name = plugin.get('plugin', None)
+            name = plugin.get("plugin", None)
 
             if name is None:
-                raise ValueError(
-                    'Invalid plugin definition: {}'.format(str(plugin))
-                )
-            elif 'url' not in plugin and name not in self._known_plugins:
-                raise ValueError(
-                    'Unknown plugin: {}\nPlease provide URL'.format(name)
-                )
+                raise ValueError("Invalid plugin definition: {}".format(str(plugin)))
+            elif "url" not in plugin and name not in self._known_plugins:
+                raise ValueError("Unknown plugin: {}\nPlease provide URL".format(name))
 
     def _handle_install(self, data):
         for plugin in data:
-            language = plugin['plugin']
-            self._log.info('Installing ' + language)
+            language = plugin["plugin"]
+            self._log.info("Installing " + language)
             self._run_command(
-                'asdf plugin-add {} {}'.format(language, plugin.get('url', '')).strip(),
-                'Installing {} plugin'.format(language),
-                'Failed to install: {} plugin'.format(language)
+                "asdf plugin-add {} {}".format(language, plugin.get("url", "")).strip(),
+                "Installing {} plugin".format(language),
+                "Failed to install: {} plugin".format(language),
             )
 
-            if 'versions' in plugin:
-                for version in plugin['versions']:
+            if "versions" in plugin:
+                for version in plugin["versions"]:
                     self._run_command(
-                        'asdf install {} {}'.format(language, version),
-                        'Installing {} {}'.format(language, version),
-                        'Failed to install: {} {}'.format(language, version),
+                        "asdf install {} {}".format(language, version),
+                        "Installing {} {}".format(language, version),
+                        "Failed to install: {} {}".format(language, version),
                     )
             else:
-                self._log.lowinfo('No {} versions to install'.format(language))
+                self._log.lowinfo("No {} versions to install".format(language))
 
     def _run_command(self, command, message=None, error_message=None, **kwargs):
         if message is not None:
@@ -83,7 +77,7 @@ class Brew(dotbot.Plugin):
 
         if output_err is not None:
             if error_message is None:
-                error_message = 'Command failed: {}'.format(command)
+                error_message = "Command failed: {}".format(command)
 
             raise ValueError(error_message)
 
