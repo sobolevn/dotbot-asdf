@@ -1,6 +1,6 @@
 # dotbot-asdf
 
-Install [`asdf`](https://github.com/asdf-vm/asdf) plugins with `dotbot`.
+Install [`asdf`](https://github.com/asdf-vm/asdf) plugins and programming languages with `dotbot`.
 
 ## Prerequirements
 
@@ -22,7 +22,9 @@ git submodule add https://github.com/sobolevn/dotbot-asdf.git
 "${BASEDIR}/${DOTBOT_DIR}/${DOTBOT_BIN}" -d "${BASEDIR}" --plugin-dir dotbot-asdf -c "${CONFIG}" "${@}"
 ```
 
-3. Add required options to your [`install.conf.yaml`](/example.yaml):
+## Usage
+
+Add required options to your [`install.conf.yaml`](/example.yaml):
 
 ```yaml
 # This example uses python, nodejs and ruby plugins:
