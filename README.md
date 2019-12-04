@@ -49,7 +49,7 @@ Plugins can also be specified with just a name for [known plugins](https://asdf-
   - plugin: ruby
 ```
 
-You can even install desired versions of languages:
+You can even install desired versions of languages and the global version:
 
 ```yaml
 # This example installs python 3.7.4, nodejs 12.10 and ruby 2.6.4:
@@ -57,14 +57,17 @@ You can even install desired versions of languages:
 - asdf:
   - plugin: python
     url: https://github.com/tuvistavie/asdf-python.git
+    global: 3.7.4
     versions:
       - 3.7.4
   - plugin: nodejs
     url: https://github.com/asdf-vm/asdf-nodejs.git
+    global: 12.10
     versions:
       - 12.10
   - plugin: ruby
     url: https://github.com/asdf-vm/asdf-ruby.git
+    global: 2.6.4
     versions:
       - 2.6.4
 ```
