@@ -64,6 +64,13 @@ class Brew(dotbot.Plugin):
                         "Installing {} {}".format(language, version),
                         "Failed to install: {} {}".format(language, version),
                     )
+
+            if "global" in plugin:
+                self._run_command(
+                    "asdf global {} {}".format(language, version),
+                    "Setting global {} {}".format(language, version),
+                    "Failed setting global: {} {}".format(language, version),
+                )
             else:
                 self._log.lowinfo("No {} versions to install".format(language))
 
