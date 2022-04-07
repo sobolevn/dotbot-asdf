@@ -72,6 +72,19 @@ You can even install desired versions of languages and the global version:
       - 2.6.4
 ```
 
+It's also possible to configure the location for asdf in case asdf itself was
+installed as part of the dotbot install process. This will cause the plugin to
+source the provided script before every asdf command.
+
+```yaml
+- asdf:
+  - asdf_path: /opt/asdf-vm/asdf.sh
+  - plugin: python
+    global: 3.10.4
+    versions:
+      - 3.10.4
+```
+
 That's it!
 
 ## License
