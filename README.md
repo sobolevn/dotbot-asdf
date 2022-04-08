@@ -76,6 +76,8 @@ It's also possible to configure the location for asdf in case asdf itself was
 installed as part of the dotbot install process. This will cause the plugin to
 source the provided script before every asdf command.
 
+Only the first instance of `asdf_path` in the configuration will be respected.
+
 ```yaml
 - asdf:
   - asdf_path: /opt/asdf-vm/asdf.sh
