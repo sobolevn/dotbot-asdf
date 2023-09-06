@@ -127,10 +127,11 @@ class Brew(dotbot.Plugin):
 
         if self._system_sh_is_dash():
             # dash doesn't overwrite $SHELL so lets try to use that.
-            shell = getenv("SHELL")
+            shell = getenv("SHELL", default="/usr/bin/bash")
             self._log.debug(f"dash detected, attempting to use user shell {shell}")
-            command = f'{shell} -c "{command}"'
+            command = '%s -c "%s"' % (shell, command)
 
+        self._log.debug(command)
         p = subprocess.Popen(command, cwd=self.cwd, shell=True, **kwargs)
         p.wait()
         output, output_err = p.communicate()
