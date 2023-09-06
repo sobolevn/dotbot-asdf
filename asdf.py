@@ -1,4 +1,5 @@
 import subprocess
+from os import getenv
 
 import dotbot
 
@@ -22,7 +23,7 @@ class Brew(dotbot.Plugin):
             error_message="Failed to get known plugins",
             stdout=subprocess.PIPE,
         )
-        plugins = output.decode("utf-8") # type: ignore
+        plugins = output.decode("utf-8")  # type: ignore
         for plugin in plugins.split()[::2]:
             self._known_plugins.append(plugin)
 
@@ -36,7 +37,6 @@ class Brew(dotbot.Plugin):
     @asdf_location.setter
     def asdf_location(self, location):
         self._asdf_location = location
-
 
     # API methods
 
@@ -104,12 +104,32 @@ class Brew(dotbot.Plugin):
             else:
                 self._log.lowinfo("No {} versions to install".format(language))
 
+    def _system_sh_is_dash(self):
+        """Debian has replaced bash with dash as the system shell, and has
+        removed the ability to switch it back ref
+        https://launchpad.net/debian/+source/dash/0.5.11+git20210903+057cd650a4ed-4.
+
+        dash doesn't have any way to source files, which is why we need to check for it.
+        If the `type source` command returns 127, that means the shell doesn't support source.
+        """
+
+        dash_check = subprocess.Popen(
+            "type source", shell=True, stdout=subprocess.DEVNULL
+        ).wait()
+        return dash_check == 127
+
     def _run_command(self, command, message=None, error_message=None, **kwargs):
         if message is not None:
             self._log.lowinfo(message)
 
         if self.asdf_location:
             command = "source %s && %s" % (self.asdf_location, command)
+
+        if self._system_sh_is_dash():
+            # dash doesn't overwrite $SHELL so lets try to use that.
+            shell = getenv("SHELL")
+            self._log.debug(f"dash detected, attempting to use user shell {shell}")
+            command = f'{shell} -c "{command}"'
 
         p = subprocess.Popen(command, cwd=self.cwd, shell=True, **kwargs)
         p.wait()
