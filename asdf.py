@@ -23,7 +23,7 @@ class Brew(dotbot.Plugin):
             error_message="Failed to get known plugins",
             stdout=subprocess.PIPE,
         )
-        plugins = output.decode("utf-8")  # type: ignore
+        plugins = output.decode("utf-8") # type: ignore
         for plugin in plugins.split()[::2]:
             self._known_plugins.append(plugin)
 
