@@ -123,13 +123,12 @@ class Brew(dotbot.Plugin):
             self._log.lowinfo(message)
 
         if self.asdf_location:
-            command = "source %s && %s" % (self.asdf_location, command)
-
+            command = f"source {self.asdf_location} && {command}"
         if self._system_sh_is_dash():
             # dash doesn't overwrite $SHELL so lets try to use that.
             shell = getenv("SHELL", default="/usr/bin/bash")
             self._log.debug(f"dash detected, attempting to use user shell {shell}")
-            command = '%s -c "%s"' % (shell, command)
+            command = f'{shell} -c "{command}"'
 
         self._log.debug(command)
         p = subprocess.Popen(command, cwd=self.cwd, shell=True, **kwargs)
