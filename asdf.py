@@ -19,7 +19,7 @@ class Brew(dotbot.Plugin):
             return self._known_plugins
 
         output = self._run_command(
-            "asdf plugin-list-all",
+            "asdf plugin list all",
             error_message="Failed to get known plugins",
             stdout=subprocess.PIPE,
         )
@@ -81,7 +81,7 @@ class Brew(dotbot.Plugin):
             language = plugin["plugin"]
             self._log.info("Installing " + language)
             self._run_command(
-                "asdf plugin-add {} {}".format(language, plugin.get("url", "")).strip(),
+                "asdf plugin add {} {}".format(language, plugin.get("url", "")).strip(),
                 "Installing {} plugin".format(language),
                 "Failed to install: {} plugin".format(language),
             )
@@ -94,15 +94,30 @@ class Brew(dotbot.Plugin):
                         "Failed to install: {} {}".format(language, version),
                     )
 
-            if "global" in plugin:
-                global_version = plugin["global"]
+            # Handle both old "global" and new "default" keys for backward compatibility
+            default_version = plugin.get("default", plugin.get("global", None))
+            if default_version:
                 self._run_command(
-                    "asdf global {} {}".format(language, global_version),
-                    "Setting global {} {}".format(language, global_version),
-                    "Failed setting global: {} {}".format(language, global_version),
+                    "asdf set --home {} {}".format(language, default_version),
+                    "Setting default {} {}".format(language, default_version),
+                    "Failed setting default: {} {}".format(language, default_version),
                 )
-            else:
-                self._log.lowinfo("No {} versions to install".format(language))
+
+            # Set local versions if specified
+            if "local" in plugin:
+                self._run_command(
+                    "asdf set {} {}".format(language, plugin["local"]),
+                    "Setting local {} {}".format(language, plugin["local"]),
+                    "Failed setting local: {} {}".format(language, plugin["local"]),
+                )
+
+            # Set versions in parent directory if specified
+            if "parent" in plugin and plugin["parent"].get("version"):
+                self._run_command(
+                    "asdf set --parent {} {}".format(language, plugin["parent"]["version"]),
+                    "Setting parent {} {}".format(language, plugin["parent"]["version"]),
+                    "Failed setting parent: {} {}".format(language, plugin["parent"]["version"]),
+                )
 
     def _system_sh_is_dash(self):
         """Debian has replaced bash with dash as the system shell, and has
